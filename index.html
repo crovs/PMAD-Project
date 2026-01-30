@@ -1,89 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="GeoSnap - Capture and explore your memories on a map">
-    <meta name="theme-color" content="#2c3e50">
-    
+    <meta name="theme-color" content="#667eea">
+
     <title>GeoSnap - Photo Journal</title>
-    
+
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json">
-    
+
     <!-- Icons -->
     <link rel="icon" type="image/png" href="/assets/icons/icon-192x192.png">
     <link rel="apple-touch-icon" href="/assets/icons/icon-192x192.png">
-    
+
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/views.css">
-    
+
     <!-- Leaflet CSS for Map -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-          crossorigin=""/>
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 </head>
+
 <body>
     <!-- Offline Indicator -->
     <div id="offline-indicator" class="offline-indicator hidden">
-        <span>📵 You're offline</span>
+        <span>📵 You're offline - Don't worry, your photos are saved locally!</span>
     </div>
 
+    <!-- Desktop Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="app-logo">📸</div>
+            <h2 class="app-title">GeoSnap</h2>
+        </div>
+
+        <nav class="sidebar-nav">
+            <button data-view="feed-view" class="nav-item active">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-text">My Memories</span>
+            </button>
+            <button data-view="map-view" class="nav-item">
+                <span class="nav-icon">🗺️</span>
+                <span class="nav-text">Map View</span>
+            </button>
+            <button data-view="camera-view" class="nav-item">
+                <span class="nav-icon">📷</span>
+                <span class="nav-text">Take Photo</span>
+            </button>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button id="upload-btn" class="btn-primary">
+                <span>📁</span>
+                <span>Upload Photo</span>
+            </button>
+            <button id="export-btn" class="btn-secondary">
+                <span>💾</span>
+                <span>Export Data</span>
+            </button>
+        </div>
+    </aside>
+
     <!-- Main App Container -->
-    <div id="app">
+    <div id="app" class="app-main">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-left">
+                <h1 id="view-title">My Memories</h1>
+            </div>
+            <div class="header-right">
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Search memories...">
+                    <span class="search-icon">🔍</span>
+                </div>
+                <button id="mobile-upload-btn" class="btn-fab">
+                    <span>+</span>
+                </button>
+            </div>
+        </header>
+
         <!-- Feed View -->
         <section id="feed-view" class="view active">
-            <header class="view-header">
-                <h1>📸 My Memories</h1>
-            </header>
-            <div id="memories-grid" class="memories-grid">
-                <!-- Memories will be dynamically inserted here -->
-                <div class="empty-state">
-                    <p>No memories yet</p>
-                    <p class="empty-hint">Tap the camera button to capture your first moment!</p>
+            <div class="view-content">
+                <div class="filter-bar">
+                    <select id="sort-select" class="filter-select">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="location">By Location</option>
+                    </select>
+                </div>
+
+                <div id="memories-grid" class="memories-grid">
+                    <!-- Memories will be dynamically inserted here -->
+                    <div class="empty-state">
+                        <div class="empty-icon">📸</div>
+                        <h3>No memories yet</h3>
+                        <p>Start capturing your moments by taking a photo or uploading from your gallery!</p>
+                        <button class="btn-primary" onclick="document.getElementById('upload-btn').click()">
+                            Upload Your First Photo
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- Camera View -->
         <section id="camera-view" class="view">
-            <header class="view-header">
-                <button id="back-from-camera" class="back-btn">← Back</button>
-                <h1>📷 Capture</h1>
-            </header>
-            <div class="camera-container">
-                <video id="camera-preview" autoplay playsinline></video>
-                <canvas id="camera-canvas" style="display: none;"></canvas>
-                
-                <!-- Fallback file input for devices without camera access -->
-                <input type="file" id="file-input" accept="image/*" capture="environment" style="display: none;">
-                
-                <div class="camera-controls">
-                    <button id="capture-btn" class="capture-btn">
-                        <span class="capture-circle"></span>
-                    </button>
+            <div class="view-content camera-content">
+                <div class="camera-container">
+                    <video id="camera-preview" autoplay playsinline></video>
+                    <canvas id="camera-canvas" style="display: none;"></canvas>
+
+                    <input type="file" id="file-input" accept="image/*" capture="environment" style="display: none;">
+
+                    <div class="camera-controls">
+                        <button id="capture-btn" class="capture-btn">
+                            <span class="capture-circle"></span>
+                        </button>
+                    </div>
+
+                    <div id="camera-status" class="camera-status"></div>
                 </div>
-                
-                <div id="camera-status" class="camera-status"></div>
             </div>
         </section>
 
         <!-- Map View -->
         <section id="map-view" class="view">
-            <header class="view-header">
-                <h1>🗺️ Map</h1>
-            </header>
-            <div id="map-container" class="map-container">
-                <!-- Leaflet map will be initialized here -->
-            </div>
-            <div id="map-status" class="map-status">
-                <!-- Status messages for map -->
+            <div class="view-content map-content">
+                <div id="map-container" class="map-container">
+                    <!-- Leaflet map will be initialized here -->
+                </div>
+                <div id="map-status" class="map-status"></div>
             </div>
         </section>
     </div>
 
-    <!-- Bottom Navigation -->
+    <!-- Bottom Navigation (Mobile Only) -->
     <nav class="bottom-nav">
         <button data-view="feed-view" class="nav-btn active">
             <span class="nav-icon">🏠</span>
@@ -99,16 +155,114 @@
         </button>
     </nav>
 
+    <!-- Upload Modal -->
+    <div id="upload-modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Upload Photo</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="drop-zone" class="drop-zone">
+                    <div class="drop-zone-content">
+                        <span class="drop-icon">📁</span>
+                        <p>Drag & drop your photo here</p>
+                        <p class="or-text">or</p>
+                        <button id="select-file-btn" class="btn-primary">Choose File</button>
+                        <input type="file" id="upload-file-input" accept="image/*" style="display: none;">
+                    </div>
+                </div>
+
+                <div id="upload-preview" class="upload-preview hidden">
+                    <img id="preview-image" alt="Preview">
+
+                    <div class="form-group">
+                        <label for="photo-location">Location</label>
+                        <input type="text" id="photo-location" placeholder="Enter location or use current location">
+                        <button id="use-current-location" class="btn-secondary">📍 Use Current Location</button>
+                        <button id="pick-on-map" class="btn-secondary">🗺️ Pick on Map</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="photo-notes">Notes (Optional)</label>
+                        <textarea id="photo-notes" rows="3" placeholder="Add a description or notes..."></textarea>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button id="cancel-upload" class="btn-secondary">Cancel</button>
+                        <button id="save-upload" class="btn-primary">Save Memory</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Photo Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Memory</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <img id="edit-image" class="edit-image" alt="Memory">
+
+                <div class="form-group">
+                    <label for="edit-location">Location</label>
+                    <input type="text" id="edit-location">
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-notes">Notes</label>
+                    <textarea id="edit-notes" rows="3"></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button id="delete-photo" class="btn-danger">Delete</button>
+                    <button id="save-edit" class="btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Location Picker Modal -->
+    <div id="location-modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>Pick Location</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" id="location-search" placeholder="Search for a location...">
+                </div>
+                <div id="location-map" class="location-map"></div>
+                <p class="help-text">Click on the map to select a location</p>
+                <div class="modal-actions">
+                    <button id="cancel-location" class="btn-secondary">Cancel</button>
+                    <button id="confirm-location" class="btn-primary">Confirm Location</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-            crossorigin=""></script>
-    
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
     <!-- App Scripts -->
     <script src="/js/storage.js"></script>
     <script src="/js/geolocation.js"></script>
     <script src="/js/camera.js"></script>
     <script src="/js/map.js"></script>
+    <script src="/js/ui.js"></script>
     <script src="/js/app.js"></script>
 </body>
+
 </html>

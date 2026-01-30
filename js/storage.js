@@ -25,13 +25,13 @@ const Storage = {
             // Create object store on first run or version upgrade
             request.onupgradeneeded = (event) => {
                 const db = event.target.result;
-                
+
                 if (!db.objectStoreNames.contains(this.storeName)) {
-                    const objectStore = db.createObjectStore(this.storeName, { 
-                        keyPath: 'id', 
-                        autoIncrement: true 
+                    const objectStore = db.createObjectStore(this.storeName, {
+                        keyPath: 'id',
+                        autoIncrement: true
                     });
-                    
+
                     // Create indexes for querying
                     objectStore.createIndex('timestamp', 'timestamp', { unique: false });
                     objectStore.createIndex('location', 'location', { unique: false });
@@ -46,7 +46,7 @@ const Storage = {
      */
     async saveMemory(memory) {
         if (!this.db) await this.init();
-        
+
         return new Promise((resolve, reject) => {
             const transaction = this.db.transaction([this.storeName], 'readwrite');
             const objectStore = transaction.objectStore(this.storeName);
@@ -63,7 +63,7 @@ const Storage = {
      */
     async getAllMemories() {
         if (!this.db) await this.init();
-        
+
         return new Promise((resolve, reject) => {
             const transaction = this.db.transaction([this.storeName], 'readonly');
             const objectStore = transaction.objectStore(this.storeName);
@@ -84,11 +84,28 @@ const Storage = {
      */
     async getMemory(id) {
         if (!this.db) await this.init();
-        
+
         return new Promise((resolve, reject) => {
             const transaction = this.db.transaction([this.storeName], 'readonly');
             const objectStore = transaction.objectStore(this.storeName);
             const request = objectStore.get(id);
+
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+        });
+    },
+
+    /**
+     * Update a memory
+     * @param {Object} memory - Memory object with id
+     */
+    async updateMemory(memory) {
+        if (!this.db) await this.init();
+
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction([this.storeName], 'readwrite');
+            const objectStore = transaction.objectStore(this.storeName);
+            const request = objectStore.put(memory);
 
             request.onsuccess = () => resolve(request.result);
             request.onerror = () => reject(request.error);
@@ -101,7 +118,7 @@ const Storage = {
      */
     async deleteMemory(id) {
         if (!this.db) await this.init();
-        
+
         return new Promise((resolve, reject) => {
             const transaction = this.db.transaction([this.storeName], 'readwrite');
             const objectStore = transaction.objectStore(this.storeName);
@@ -113,11 +130,24 @@ const Storage = {
     },
 
     /**
+     * Export all data as JSON
+     */
+    async exportData() {
+        const memories = await this.getAllMemories();
+        const data = {
+            exportDate: new Date().toISOString(),
+            totalMemories: memories.length,
+            memories: memories
+        };
+        return JSON.stringify(data, null, 2);
+    },
+
+    /**
      * Clear all memories
      */
     async clearAll() {
         if (!this.db) await this.init();
-        
+
         return new Promise((resolve, reject) => {
             const transaction = this.db.transaction([this.storeName], 'readwrite');
             const objectStore = transaction.objectStore(this.storeName);
