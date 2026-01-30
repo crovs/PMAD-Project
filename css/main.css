@@ -1,0 +1,312 @@
+/* ===========================
+   CSS Reset & Base Styles
+   =========================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ===========================
+   CSS Custom Properties
+   =========================== */
+
+:root {
+    /* Colors */
+    --color-primary: #2c3e50;
+    --color-secondary: #3498db;
+    --color-accent: #27ae60;
+    --color-background: #ffffff;
+    --color-surface: #f8f9fa;
+    --color-text: #2c3e50;
+    --color-text-light: #7f8c8d;
+    --color-border: #ecf0f1;
+    --color-error: #e74c3c;
+    
+    /* Spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    
+    /* Typography */
+    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.5rem;
+    --font-size-2xl: 2rem;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    
+    /* Border Radius */
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 1rem;
+    --radius-full: 9999px;
+    
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-base: 250ms ease;
+    --transition-slow: 350ms ease;
+    
+    /* Layout */
+    --nav-height: 70px;
+    --header-height: 60px;
+}
+
+/* ===========================
+   Base Typography
+   =========================== */
+
+body {
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+    color: var(--color-text);
+    background-color: var(--color-background);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+h1 { font-size: var(--font-size-2xl); }
+h2 { font-size: var(--font-size-xl); }
+h3 { font-size: var(--font-size-lg); }
+
+/* ===========================
+   Layout
+   =========================== */
+
+#app {
+    min-height: 100vh;
+    padding-bottom: var(--nav-height);
+}
+
+.view {
+    display: none;
+    min-height: calc(100vh - var(--nav-height));
+}
+
+.view.active {
+    display: block;
+}
+
+.view-header {
+    height: var(--header-height);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--color-background);
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.view-header h1 {
+    font-size: var(--font-size-xl);
+    flex: 1;
+}
+
+/* ===========================
+   Buttons
+   =========================== */
+
+button {
+    font-family: inherit;
+    font-size: inherit;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.back-btn {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background-color: var(--color-surface);
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    font-weight: 500;
+}
+
+.back-btn:hover {
+    background-color: var(--color-border);
+}
+
+.back-btn:active {
+    transform: scale(0.95);
+}
+
+/* ===========================
+   Bottom Navigation
+   =========================== */
+
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--nav-height);
+    background-color: var(--color-background);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 100;
+    padding: var(--spacing-xs);
+}
+
+.nav-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: var(--spacing-xs);
+    flex: 1;
+    color: var(--color-text-light);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.nav-btn:hover {
+    background-color: var(--color-surface);
+}
+
+.nav-btn.active {
+    color: var(--color-primary);
+    background-color: var(--color-surface);
+}
+
+.nav-icon {
+    font-size: 1.5rem;
+}
+
+.nav-label {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+}
+
+/* ===========================
+   Offline Indicator
+   =========================== */
+
+.offline-indicator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--color-error);
+    color: white;
+    text-align: center;
+    padding: var(--spacing-xs);
+    font-size: var(--font-size-sm);
+    z-index: 1000;
+    transform: translateY(0);
+    transition: transform var(--transition-base);
+}
+
+.offline-indicator.hidden {
+    transform: translateY(-100%);
+}
+
+/* ===========================
+   Cards
+   =========================== */
+
+.card {
+    background-color: var(--color-background);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    transition: all var(--transition-base);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+/* ===========================
+   Empty States
+   =========================== */
+
+.empty-state {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--color-text-light);
+}
+
+.empty-state p {
+    margin-bottom: var(--spacing-sm);
+}
+
+.empty-hint {
+    font-size: var(--font-size-sm);
+}
+
+/* ===========================
+   Utility Classes
+   =========================== */
+
+.hidden {
+    display: none !important;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+
+/* ===========================
+   Responsive Design
+   =========================== */
+
+@media (min-width: 768px) {
+    :root {
+        --nav-height: 0px;
+    }
+    
+    .bottom-nav {
+        display: none;
+    }
+    
+    #app {
+        padding-bottom: 0;
+    }
+    
+    .view-header {
+        padding: var(--spacing-md) var(--spacing-lg);
+    }
+    
+    /* Desktop navigation could be added here */
+}
+
+@media (prefers-color-scheme: dark) {
+    /* Dark mode support - optional enhancement */
+    :root {
+        --color-background: #1a1a1a;
+        --color-surface: #2d2d2d;
+        --color-text: #f8f9fa;
+        --color-text-light: #b0b0b0;
+        --color-border: #3d3d3d;
+    }
+}
