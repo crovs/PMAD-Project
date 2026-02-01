@@ -67,6 +67,9 @@ const GeoLocation = {
                 navigator.geolocation.getCurrentPosition(
                     // ===== SUCCESS CALLBACK - Got the coordinates! =====
                     async (position) => {
+                        if (resolved) return;  // Prevent duplicate callbacks (browser quirk)
+                        resolved = true;
+
                         // Extract coordinates from the position object
                         const { latitude, longitude } = position.coords;
 
@@ -101,6 +104,13 @@ const GeoLocation = {
 
                     // ===== ERROR CALLBACK - Something went wrong =====
                     (error) => {
+                        if (resolved) {
+                            // Ignore errors if we already got success (browser quirk - sometimes both callbacks fire)
+                            console.log('ℹ️ Ignoring error after successful location retrieval');
+                            return;
+                        }
+                        resolved = true;
+
                         let errorMessage = 'Unable to retrieve your location';
 
                         // Provide specific error messages based on error type
