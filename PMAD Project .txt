@@ -14,7 +14,3 @@ Project and code documentation:Explanation: The source code should be well-comme
 Code quality:Explanation: The code should be readable, well-organized, and follow best practices.
  
 
-
-Web App Manifest -> https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest
-Service Worker (Basics + Lifecycle) -> https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API
-Caching Strategies -> https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Caching
