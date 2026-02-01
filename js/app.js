@@ -172,9 +172,23 @@ const App = {
             try {
                 UI.showToast('success', 'Getting your location...');
                 const location = await GeoLocation.getCurrentPosition();
+
+                // Update the input field
                 document.getElementById('photo-location').value = location.locationName;
+
+                // Initialize pendingUpload if it doesn't exist yet (user clicked location before selecting photo)
+                if (!UI.pendingUpload) {
+                    UI.pendingUpload = {
+                        timestamp: Date.now()
+                    };
+                }
+
+                // Store the location data
                 UI.pendingUpload.location = location;
+
+                UI.showToast('success', `Location set: ${location.locationName}`);
             } catch (error) {
+                console.error('Location error:', error);
                 UI.showToast('error', 'Could not get location: ' + error.message);
             }
         });
