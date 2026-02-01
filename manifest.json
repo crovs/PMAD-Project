@@ -1,12 +1,22 @@
 {
+  "__comment1": "PWA MANIFEST - Makes the app installable on any device",
+  "__comment2": "This file tells browsers how to install and display the app",
   "name": "GeoSnap - Photo Journal",
+  "_name_comment": "Full app name shown during installation",
   "short_name": "GeoSnap",
+  "_short_name_comment": "Name shown on device home screen (limited space)",
   "description": "Capture and explore your memories on a map",
+  "_description_comment": "Brief description of what the app does",
   "start_url": "/",
+  "_start_url_comment": "Where the app opens when launched from home screen",
   "display": "standalone",
-  "theme_color": "#2c3e50",
+  "_display_comment": "Opens like a native app without browser UI (address bar, tabs)",
+  "theme_color": "#667eea",
+  "_theme_color_comment": "Color of the app's title bar and status bar",
   "background_color": "#ffffff",
-  "orientation": "portrait-primary",
+  "_background_color_comment": "Background color for splash screen while app loads",
+  "orientation": "any",
+  "_orientation_comment": "App works in both portrait and landscape",
   "icons": [
     {
       "src": "/assets/icons/icon-192x192.png",
@@ -20,5 +30,6 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "_icons_comment": "App icons for home screen and splash screen (multiple sizes for different devices)"
 }
