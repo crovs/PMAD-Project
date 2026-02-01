@@ -418,6 +418,47 @@
     min-height: 80px;
 }
 
+/* Location Buttons */
+.location-buttons {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-xs);
+}
+
+.btn-location {
+    flex: 1;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all var(--transition-base);
+    cursor: pointer;
+}
+
+.btn-location:hover {
+    background: var(--gradient-primary);
+    color: white;
+    border-color: transparent;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-location:active {
+    transform: translateY(0);
+}
+
+.btn-location span:first-child {
+    font-size: 1.2rem;
+}
+
+
 .help-text {
     font-size: var(--font-size-sm);
     color: var(--color-text-light);
