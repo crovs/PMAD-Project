@@ -417,7 +417,8 @@ const App = {
         });
 
         const locationName = memory.location?.locationName || 'Location unavailable';
-        const coords = memory.location
+        // Only show coordinates if we have actual GPS data
+        const coords = (memory.location && memory.location.latitude !== undefined && memory.location.longitude !== undefined)
             ? `${memory.location.latitude.toFixed(4)}, ${memory.location.longitude.toFixed(4)}`
             : '';
         const notes = memory.notes || '';
