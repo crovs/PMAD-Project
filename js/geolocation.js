@@ -52,15 +52,15 @@ const GeoLocation = {
         this.requesting = true;
 
         try {
+            // ===== Check if browser supports Geolocation =====
+            if (!navigator.geolocation) {
+                throw new Error('Geolocation is not supported by your browser');
+            }
+
+            console.log('📍 Requesting location permission...');
+
             return await new Promise((resolve, reject) => {
-
-                // ===== Check if browser supports Geolocation =====
-                if (!navigator.geolocation) {
-                    reject(new Error('Geolocation is not supported by your browser'));
-                    return;
-                }
-
-                console.log('📍 Requesting location permission...');
+                let resolved = false;  // Flag to prevent duplicate resolve/reject
 
                 // ===== Request GPS position from browser =====
                 // This triggers a permission prompt: "Allow GeoSnap to access your location?"
