@@ -19,6 +19,8 @@
  */
 
 const GeoLocation = {
+    requesting: false,  // Flag to prevent simultaneous requests
+
     // ========================================================================
     // GET CURRENT POSITION - Main function to get user's location
     // ========================================================================
@@ -41,94 +43,108 @@ const GeoLocation = {
      * }
      */
     async getCurrentPosition() {
-        return new Promise((resolve, reject) => {
+        // Prevent duplicate simultaneous requests
+        if (this.requesting) {
+            console.log('⚠️ Location request already in progress, please wait...');
+            throw new Error('Location request already in progress');
+        }
 
-            // ===== Check if browser supports Geolocation =====
-            if (!navigator.geolocation) {
-                reject(new Error('Geolocation is not supported by your browser'));
-                return;
-            }
+        this.requesting = true;
 
-            console.log('📍 Requesting location permission...');
+        try {
+            return await new Promise((resolve, reject) => {
 
-            // ===== Request GPS position from browser =====
-            // This triggers a permission prompt: "Allow GeoSnap to access your location?"
-            navigator.geolocation.getCurrentPosition(
-                // ===== SUCCESS CALLBACK - Got the coordinates! =====
-                async (position) => {
-                    // Extract coordinates from the position object
-                    const { latitude, longitude } = position.coords;
-
-                    console.log(`✅ GPS coordinates: ${latitude}, ${longitude}`);
-
-                    // Start with coordinates as fallback (in case geocoding fails)
-                    let locationName = `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
-
-                    // ===== Try to get human-readable address =====
-                    try {
-                        console.log('🌍 Converting coordinates to address...');
-                        const name = await this.reverseGeocode(latitude, longitude);
-
-                        if (name) {
-                            locationName = name;  // Use readable name if successful
-                            console.log(`✅ Location: ${locationName}`);
-                        }
-                    } catch (error) {
-                        // Reverse geocoding failed (maybe offline or API error)
-                        // That's okay, we'll just use coordinates
-                        console.log('⚠️ Reverse geocoding failed, using coordinates:', error);
-                    }
-
-                    // Return the complete location data
-                    resolve({
-                        latitude,
-                        longitude,
-                        locationName,
-                        accuracy: position.coords.accuracy  // How accurate the GPS reading is (in meters)
-                    });
-                },
-
-                // ===== ERROR CALLBACK - Something went wrong =====
-                (error) => {
-                    let errorMessage = 'Unable to retrieve your location';
-
-                    // Provide specific error messages based on error type
-                    switch (error.code) {
-                        case error.PERMISSION_DENIED:
-                            // User clicked "Don't Allow"
-                            errorMessage = 'Location permission denied. Please enable location access in your browser settings.';
-                            console.error('❌ User denied location permission');
-                            break;
-
-                        case error.POSITION_UNAVAILABLE:
-                            // GPS hardware issue or no signal
-                            errorMessage = 'Location information unavailable. Are you indoors or in an area with poor GPS signal?';
-                            console.error('❌ Position unavailable');
-                            break;
-
-                        case error.TIMEOUT:
-                            // Took too long to get GPS fix
-                            errorMessage = 'Location request timed out. Try again?';
-                            console.error('❌ Location request timeout');
-                            break;
-
-                        default:
-                            console.error('❌ Unknown location error:', error);
-                    }
-
-                    reject(new Error(errorMessage));
-                },
-
-                // ===== POSITION OPTIONS - Configuration for GPS =====
-                {
-                    enableHighAccuracy: true,  // Use GPS (not just WiFi/cell tower triangulation)
-                    // More accurate but uses more battery
-                    timeout: 10000,            // Wait max 10 seconds for GPS fix
-                    maximumAge: 0              // Don't use cached location, get fresh coordinates
-                    // Set to 0 to ensure always getting current location
+                // ===== Check if browser supports Geolocation =====
+                if (!navigator.geolocation) {
+                    reject(new Error('Geolocation is not supported by your browser'));
+                    return;
                 }
-            );
-        });
+
+                console.log('📍 Requesting location permission...');
+
+                // ===== Request GPS position from browser =====
+                // This triggers a permission prompt: "Allow GeoSnap to access your location?"
+                navigator.geolocation.getCurrentPosition(
+                    // ===== SUCCESS CALLBACK - Got the coordinates! =====
+                    async (position) => {
+                        // Extract coordinates from the position object
+                        const { latitude, longitude } = position.coords;
+
+                        console.log(`✅ GPS coordinates: ${latitude}, ${longitude}`);
+
+                        // Start with coordinates as fallback (in case geocoding fails)
+                        let locationName = `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+
+                        // ===== Try to get human-readable address =====
+                        try {
+                            console.log('🌍 Converting coordinates to address...');
+                            const name = await this.reverseGeocode(latitude, longitude);
+
+                            if (name) {
+                                locationName = name;  // Use readable name if successful
+                                console.log(`✅ Location: ${locationName}`);
+                            }
+                        } catch (error) {
+                            // Reverse geocoding failed (maybe offline or API error)
+                            // That's okay, we'll just use coordinates
+                            console.log('⚠️ Reverse geocoding failed, using coordinates:', error);
+                        }
+
+                        // Return the complete location data
+                        resolve({
+                            latitude,
+                            longitude,
+                            locationName,
+                            accuracy: position.coords.accuracy  // How accurate the GPS reading is (in meters)
+                        });
+                    },
+
+                    // ===== ERROR CALLBACK - Something went wrong =====
+                    (error) => {
+                        let errorMessage = 'Unable to retrieve your location';
+
+                        // Provide specific error messages based on error type
+                        switch (error.code) {
+                            case error.PERMISSION_DENIED:
+                                // User clicked "Don't Allow"
+                                errorMessage = 'Location permission denied. Please enable location access in your browser settings.';
+                                console.error('❌ User denied location permission');
+                                break;
+
+                            case error.POSITION_UNAVAILABLE:
+                                // GPS hardware issue or no signal
+                                errorMessage = 'Location information unavailable. Are you indoors or in an area with poor GPS signal?';
+                                console.error('❌ Position unavailable');
+                                break;
+
+                            case error.TIMEOUT:
+                                // Took too long to get GPS fix
+                                errorMessage = 'Location request timed out. Try again?';
+                                console.error('❌ Location request timeout');
+                                break;
+
+                            default:
+                                console.error('❌ Unknown location error:', error);
+                        }
+
+                        this.requesting = false;  // Reset flag on error
+                        reject(new Error(errorMessage));
+                    },
+
+                    // ===== POSITION OPTIONS - Configuration for GPS =====
+                    {
+                        enableHighAccuracy: true,  // Use GPS (not just WiFi/cell tower triangulation)
+                        // More accurate but uses more battery
+                        timeout: 10000,            // Wait max 10 seconds for GPS fix
+                        maximumAge: 0              // Don't use cached location, get fresh coordinates
+                        // Set to 0 to ensure always getting current location
+                    }
+                );
+            });
+        } finally {
+            // Always reset the flag when done
+            this.requesting = false;
+        }
     },
 
     // ========================================================================
