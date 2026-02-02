@@ -232,4 +232,4 @@ This project is created for educational purposes as part of the PMAD course.
 
 ## 👨‍💻 Author
 
-Created with ❤️ using vanilla HTML, CSS, and JavaScript
+Created with ❤️ by Ahmet Yada using vanilla HTML, CSS, and JavaScript
