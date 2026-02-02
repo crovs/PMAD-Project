@@ -14,8 +14,6 @@
  * - Example: "New York, USA" instead of numbers
  * - We use OpenStreetMap's free Nominatim API for this
  * 
- * This is ONE OF TWO native device features for PMAD requirement!
- * (The other is Camera API)
  */
 
 const GeoLocation = {
@@ -322,9 +320,8 @@ const GeoLocation = {
 // FOR PRESENTATION - KEY POINTS
 // ============================================================================
 /**
- * EXPLAIN TO YOUR TEACHER:
  * 
- * 1. Native Device Feature #2 (PMAD requirement!)
+ * 1. Native Device Feature #2 
  *    - Uses browser's Geolocation API
  *    - Accesses device GPS hardware
  *    - Works on phones, tablets, laptops
@@ -349,8 +346,5 @@ const GeoLocation = {
  *    - If GPS unavailable, falls back to WiFi/cell towers (50-500m)
  *    - Best accuracy outdoors with clear sky view
  * 
- * DEMO TIPS:
- * - Show permission dialog when accessing location
- * - Explain it works offline (coordinates) but needs online for address
- * - Point out accuracy varies (better outdoors)
+ * 
  */

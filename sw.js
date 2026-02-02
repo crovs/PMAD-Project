@@ -316,7 +316,7 @@ self.addEventListener('push', (event) => {
 // FOR PRESENTATION - KEY POINTS TO REMEMBER
 // ============================================================================
 /**
- * 1. Service Worker enables offline functionality (PMAD requirement!)
+ * 1. Service Worker enables offline functionality 
  * 2. We use TWO caching strategies:
  *    - Cache First: For static files (fast loading)
  *    - Network First: For API calls (fresh data when online)

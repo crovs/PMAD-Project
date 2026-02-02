@@ -14,7 +14,7 @@
  * - IndexedDB: Can store GBs of data including images!
  * - Perfect for storing photos with their metadata
  * 
- * Our Database Structure:
+ * My Database Structure:
  * Database: "GeoSnapDB"
  *   └─ Object Store: "memories" (like a table in SQL)
  *       ├─ id (primary key, auto-incremented)
@@ -316,7 +316,6 @@ const Storage = {
 // FOR PRESENTATION - KEY POINTS
 // ============================================================================
 /**
- * EXPLAIN TO YOUR TEACHER:
  * 
  * 1. Why IndexedDB?
  *    - Stores photos permanently in browser (even after closing)
@@ -335,7 +334,7 @@ const Storage = {
  *    - UPDATE: updateMemory() - edit location/notes
  *    - DELETE: deleteMemory() - remove photo
  * 
- * 4. Why it's important for PMAD:
+ * 4. Why it's important :
  *    - Enables offline functionality (requirement!)
  *    - Persistent storage (data doesn't disappear)
  *    - Privacy-first (no cloud dependency)
