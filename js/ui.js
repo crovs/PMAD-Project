@@ -142,7 +142,15 @@ const UI = {
             return;
         }
 
+        // Check file size (max 10MB)
+        const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+        if (file.size > maxSize) {
+            this.showToast('error', `Image too large! Maximum size is 10MB. Your image is ${(file.size / 1024 / 1024).toFixed(1)}MB`);
+            return;
+        }
+
         const reader = new FileReader();
+
         reader.onload = (e) => {
             document.getElementById('drop-zone').classList.add('hidden');
             document.getElementById('upload-preview').classList.remove('hidden');
@@ -154,6 +162,12 @@ const UI = {
                 timestamp: Date.now()
             };
         };
+
+        reader.onerror = (error) => {
+            console.error('File read error:', error);
+            this.showToast('error', 'Failed to read image file. Please try another image.');
+        };
+
         reader.readAsDataURL(file);
     },
 
